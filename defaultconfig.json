@@ -1,0 +1,11 @@
+{
+    "api": {
+        "mainkey": ""
+    },
+    
+    "bot": {
+        "token": "",
+        "prefix": "-"
+    }
+    
+}
