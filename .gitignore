@@ -2,3 +2,5 @@ config.json
 info.json
 .DS_Store
 *.pyc
+.vscode/
+.idea/
