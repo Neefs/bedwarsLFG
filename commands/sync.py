@@ -74,6 +74,29 @@ class Sync(commands.Cog):
         else:
             await ctx.send("No perm.", delete_after=5)
 
+    @commands.command()
+    async def forcesync(self, ctx, dc: discord.Member, user):
+        # This will be used for someone that can't link there discord for whatever reason. Such as special chars
+        if 792643071699189770 in ctx.author.roles or 792642253843464202 in ctx.author.roles or 792634123965169706 in ctx.author.roles:
+            hkey = config["api"]["mainkey"]
+            data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(hkey, user)).json()
+
+            await ctx.send("Syncing Hypixel Stats for player '" + user + "'...")
+
+            try:
+                star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
+                await dc.edit(nick="[" + str(star) + "✫] " + user)
+
+                success = await ctx.send("Success!")
+                await success.add_reaction('✅')
+            except KeyError:
+                warning = await ctx.send("This user does not have their Discord linked on their Hypixel Social Media menu.")
+                await warning.add_reaction('⚠️')
+
+
+        else:
+            await ctx.send('No perms.')
+
 
 
     def xp_to_star(self, XPLevel):

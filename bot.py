@@ -11,8 +11,7 @@ with open('./config.json', 'r+') as outfile:
 
 key = config["api"]["mainkey"]
 
-# TODO: Check If ingame discord matches discord account when registering.
-# TODO: Give people a role and nick depending on star/prestige
+
 
 bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(config["bot"]["prefix"]))
 
@@ -22,11 +21,6 @@ bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(config["
 async def on_ready():
     print('Bot is online')
 
-
-
-
-
-    
 
 @bot.command(name="load", aliases=["lc"])
 async def loadcog(ctx):
