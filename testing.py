@@ -8,10 +8,7 @@ myuuid = 'b4965441e34b477981d5e37976e7b6a2'
 key = config["api"]["mainkey"]
 
 
-data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(key, "_zore")).json()
-
-
-
+data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(key, "ramenling")).json()
 
 XPLevel = data["player"]["stats"]["Bedwars"]["Experience"]
 Star = 1
