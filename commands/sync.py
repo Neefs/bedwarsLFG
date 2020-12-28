@@ -29,7 +29,7 @@ class Sync(commands.Cog):
                     dcLink = data["player"]["socialMedia"]["links"]["DISCORD"]
                     if str(dcLink) == str(ctx.author):
                         star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
-                        await ctx.author.edit(nick="[" + str(star) + "✫] " + user)
+                        await ctx.author.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
 
                         success = await ctx.send("Success!")
                         await success.add_reaction('✅')
@@ -58,7 +58,7 @@ class Sync(commands.Cog):
                     dcLink = data["player"]["socialMedia"]["links"]["DISCORD"]
                     if str(dcLink) == str(dc):
                         star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
-                        await dc.edit(nick="[" + str(star) + "✫] " + user)
+                        await dc.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
 
                         success = await ctx.send("Success!")
                         await success.add_reaction('✅')
@@ -77,7 +77,7 @@ class Sync(commands.Cog):
     @commands.command()
     async def forcesync(self, ctx, dc: discord.Member, user):
         # This will be used for someone that can't link there discord for whatever reason. Such as special chars
-        if 792643071699189770 in ctx.author.roles or 792642253843464202 in ctx.author.roles or 792634123965169706 in ctx.author.roles:
+        if any([i for i in ctx.author.roles if i.id in [720281829810241559, 792634123965169706, 792643071699189770, 792642253843464202]]):
             hkey = config["api"]["mainkey"]
             data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(hkey, user)).json()
 
@@ -85,7 +85,7 @@ class Sync(commands.Cog):
 
             try:
                 star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
-                await dc.edit(nick="[" + str(star) + "✫] " + user)
+                await dc.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
 
                 success = await ctx.send("Success!")
                 await success.add_reaction('✅')
