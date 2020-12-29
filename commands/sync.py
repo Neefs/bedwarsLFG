@@ -5,6 +5,11 @@ from discord.utils import get
 import requests
 import json
 
+# TODO: Make all messages send in an embed
+# TODO: Delete messages after a certain point. Like 60 seconds to reduce the bot spam.
+# TODO: Add Error handling. so if someone types -sync it doesnt break
+# TODO: Add some logging.
+
 prestiges = [
     "Stone",
     "Iron",
@@ -16,7 +21,7 @@ prestiges = [
     "Crystal",
     "Opal",
     "Amethyst",
-    "Rainbow (1000+)",
+    "Rainbow",
     "Iron Prime",
     "Gold Prime",
     "Diamond Prime",
@@ -85,14 +90,14 @@ class Sync(commands.Cog):
                         role = get(ctx.author.guild.roles, name=prestige)
                         await ctx.author.add_roles(role)
                     else:
-                        warning = await ctx.send(user + "'s Discord Username does not match " + str(ctx.author).split("#")[0] + "'s Discord Username!")
-                        await warning.add_reaction('🚫')
+                        await ctx.send(embed=self.warning(user + "'s Discord Username does not match " + str(ctx.author).split("#")[0] + "'s Discord Username!"))
+                        
                 except KeyError:
-                    warning = await ctx.send("This user does not have their Discord linked on their Hypixel Social Media menu.")
-                    await warning.add_reaction('⚠️')
+                    await ctx.send(embed=self.warning("This user does not have their Discord linked on their Hypixel Social Media menu."))
+                    
             except TypeError:
-                warning = await ctx.send("This user does not exist or has never logged onto Hypixel.")
-                await warning.add_reaction('⚠️')
+                await ctx.send(embed=self.warning("This user does not exist or has never logged onto Hypixel."))
+                
         else:
             await ctx.send("No perm.", delete_after=5)
 
@@ -118,14 +123,13 @@ class Sync(commands.Cog):
                         role = get(dc.guild.roles, name=prestige)
                         await dc.add_roles(role)
                     else:
-                        warning = await ctx.send(user + "'s Discord Username does not match " + str(dc).split("#")[0] + "'s Discord Username!")
-                        await warning.add_reaction('🚫')
+                        await ctx.send(embed=self.warning(user + "'s Discord Username does not match " + str(ctx.author).split("#")[0] + "'s Discord Username!"))
                 except KeyError:
-                    warning = await ctx.send("This user does not have their Discord linked on their Hypixel Social Media menu.")
-                    await warning.add_reaction('⚠️')
+                    await ctx.send(embed=self.warning("This user does not have their Discord linked on their Hypixel Social Media menu."))
+                    
             except TypeError:
-                warning = await ctx.send("This user does not exist or has never logged onto Hypixel.")
-                await warning.add_reaction('⚠️')
+                await ctx.send(embed=self.warning("This user does not exist or has never logged onto Hypixel."))
+                
         else:
             await ctx.send("No perm.", delete_after=5)
 
@@ -141,7 +145,10 @@ class Sync(commands.Cog):
 
                 try:
                     star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
-                    await dc.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
+                    if star in range(1, 1000):
+                        await dc.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
+                    else:
+                        await dc.edit(nick="[" + str(star) + "✪] " + data["player"]["displayname"])
 
                     success = await ctx.send("Success!")
                     await success.add_reaction('✅')
@@ -157,11 +164,10 @@ class Sync(commands.Cog):
                     role = get(dc.guild.roles, name=prestige)
                     await dc.add_roles(role)
                 except KeyError:
-                    warning = await ctx.send("This user does not have their Discord linked on their Hypixel Social Media menu.")
-                    await warning.add_reaction('⚠️')
+                    await ctx.send(embed=self.warning("This user does not have their Discord linked on their Hypixel Social Media menu."))
+                    
             except TypeError:
-                warning = await ctx.send("The user '" + user + "' does not exist!")
-                await warning.add_reaction('🚫')
+                await ctx.send(embed=self.warning("The user '" + user + "' does not exist!"))
         else:
             await ctx.send('No perms.')
 
@@ -207,6 +213,13 @@ class Sync(commands.Cog):
             else:
                 break
         return prestiges[prestigeNum]
+
+    def warning(self, message):
+        embed = Embed()
+        embed.color = 0xffff00
+        embed.title = "⚠️ Warning ⚠️"
+        embed.description = message
+        return embed
 
 def setup(bot):
     bot.add_cog(Sync(bot))
