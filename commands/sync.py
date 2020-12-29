@@ -1,11 +1,52 @@
 import discord
 from discord import Embed
 from discord.ext import commands
+from discord.utils import get
 import requests
 import json
 
+prestiges = [
+    "Stone",
+    "Iron",
+    "Gold",
+    "Diamond",
+    "Emerald",
+    "Sapphire",
+    "Ruby",
+    "Crystal",
+    "Opal",
+    "Amethyst",
+    "Rainbow (1000+)",
+    "Iron Prime",
+    "Gold Prime",
+    "Diamond Prime",
+    "Emerald Prime",
+    "Sapphire Prime",
+    "Ruby Prime",
+    "Crystal Prime",
+    "Opal Prime",
+    "Amethyst Prime",
+    "Mirror",
+    "Light",
+    "Dawn",
+    "Dusk",
+    "Air",
+    "Wind",
+    "Nebula",
+    "Earth",
+    "Water",
+    "Fire"
+]
+
+allowedAuthorIDs = [
+    723386696007155763,
+    582385436983427075,
+    779098822181388348
+]
+
 with open('./config.json', 'r+') as outfile:
     config = json.loads(outfile.read())
+
 
 class Sync(commands.Cog):
     def __init__(self, bot):
@@ -15,10 +56,9 @@ class Sync(commands.Cog):
     async def on_ready(self):
         print('Sync Cog is ready.')
 
-
     @commands.command()
     async def sync(self, ctx, user):
-        if ctx.author.id == 582385436983427075 or ctx.author.id == 779098822181388348 or ctx.author.id == 723386696007155763:  # pureqold or testing account or neefs
+        if ctx.author.id in allowedAuthorIDs:
             hkey = config["api"]["mainkey"]
             data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(hkey, user)).json()
 
@@ -33,6 +73,17 @@ class Sync(commands.Cog):
 
                         success = await ctx.send("Success!")
                         await success.add_reaction('✅')
+
+                        prestige = self.find_prestige(star)
+
+                        # Remove old prestige roles before updating
+                        for role in ctx.author.roles:
+                            if str(role) in prestiges:
+                                await ctx.author.remove_roles(role)
+                                print("Removed role " + str(role) + " from player " + str(ctx.author))
+
+                        role = get(ctx.author.guild.roles, name=prestige)
+                        await ctx.author.add_roles(role)
                     else:
                         warning = await ctx.send(user + "'s Discord Username does not match " + str(ctx.author).split("#")[0] + "'s Discord Username!")
                         await warning.add_reaction('🚫')
@@ -46,8 +97,8 @@ class Sync(commands.Cog):
             await ctx.send("No perm.", delete_after=5)
 
     @commands.command()
-    async def devsync(self, ctx, dc: discord.Member,user):
-        if ctx.author.id == 582385436983427075 or ctx.author.id == 779098822181388348 or ctx.author.id == 723386696007155763:  # pureqold or testing account or neefs
+    async def devsync(self, ctx, dc: discord.Member, user):
+        if ctx.author.id in allowedAuthorIDs:
             hkey = config["api"]["mainkey"]
             data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(hkey, user)).json()
 
@@ -62,6 +113,10 @@ class Sync(commands.Cog):
 
                         success = await ctx.send("Success!")
                         await success.add_reaction('✅')
+
+                        prestige = self.find_prestige(star)
+                        role = get(dc.guild.roles, name=prestige)
+                        await dc.add_roles(role)
                     else:
                         warning = await ctx.send(user + "'s Discord Username does not match " + str(dc).split("#")[0] + "'s Discord Username!")
                         await warning.add_reaction('🚫')
@@ -81,23 +136,34 @@ class Sync(commands.Cog):
             hkey = config["api"]["mainkey"]
             data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(hkey, user)).json()
 
-            await ctx.send("Syncing Hypixel Stats for player '" + user + "'...")
-
             try:
-                star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
-                await dc.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
+                await ctx.send("Syncing Hypixel Stats for player '" + user + "'...")
 
-                success = await ctx.send("Success!")
-                await success.add_reaction('✅')
-            except KeyError:
-                warning = await ctx.send("This user does not have their Discord linked on their Hypixel Social Media menu.")
-                await warning.add_reaction('⚠️')
+                try:
+                    star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
+                    await dc.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
 
+                    success = await ctx.send("Success!")
+                    await success.add_reaction('✅')
 
+                    prestige = self.find_prestige(star)
+
+                    # Remove old prestige roles before updating
+                    for role in ctx.author.roles:
+                        if str(role) in prestiges:
+                            await ctx.author.remove_roles(role)
+                            print("Removed role " + str(role) + " from player " + str(ctx.author))
+
+                    role = get(dc.guild.roles, name=prestige)
+                    await dc.add_roles(role)
+                except KeyError:
+                    warning = await ctx.send("This user does not have their Discord linked on their Hypixel Social Media menu.")
+                    await warning.add_reaction('⚠️')
+            except TypeError:
+                warning = await ctx.send("The user '" + user + "' does not exist!")
+                await warning.add_reaction('🚫')
         else:
             await ctx.send('No perms.')
-
-
 
     def xp_to_star(self, XPLevel):
         Star = 1
@@ -132,6 +198,15 @@ class Sync(commands.Cog):
 
         return Star
 
+    def find_prestige(self, star):
+        prestigeNum = 0
+        while True:
+            if star - 100 > 0:
+                star -= 100
+                prestigeNum += 1
+            else:
+                break
+        return prestiges[prestigeNum]
 
 def setup(bot):
     bot.add_cog(Sync(bot))

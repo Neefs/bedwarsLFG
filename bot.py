@@ -11,7 +11,10 @@ with open('./config.json', 'r+') as outfile:
 
 key = config["api"]["mainkey"]
 
-
+allowedAuthorIDs = [
+    723386696007155763,
+    582385436983427075
+]
 
 bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(config["bot"]["prefix"]))
 
@@ -25,7 +28,7 @@ async def on_ready():
 @bot.command(name="load", aliases=["lc"])
 async def loadcog(ctx):
     running = True
-    if ctx.author.id == 723386696007155763:
+    if ctx.author.id in allowedAuthorIDs:
         init_msg = await ctx.send(embed=Embed(title='Load Cog', description='What type of cog are you loading?\n:one: command\n:two: event'))
         for i in ['1️⃣', '2️⃣']:
             await init_msg.add_reaction(i)
@@ -53,7 +56,7 @@ async def loadcog(ctx):
 @bot.command(name="unload", aliases=["uc"])
 async def unloadcog(ctx):
     running = True
-    if ctx.author.id == 723386696007155763:
+    if ctx.author.id in allowedAuthorIDs:
         init_msg = await ctx.send(embed=Embed(title='Unload Cog', description='What type of cog are you unloading?\n:one: command\n:two: event'))
         for i in ['1️⃣', '2️⃣']:
             await init_msg.add_reaction(i)
@@ -81,7 +84,7 @@ async def unloadcog(ctx):
 @bot.command(aliases=["rc"])
 async def reloadcog(ctx):
     running = True
-    if ctx.author.id == 723386696007155763:
+    if ctx.author.id in allowedAuthorIDs:
         init_msg = await ctx.send(embed=Embed(title='ReLoad Cog', description='What type of cog are you reloading?\n:one: command\n:two: event'))
         for i in ['1️⃣', '2️⃣']:
             await init_msg.add_reaction(i)
@@ -141,9 +144,6 @@ async def reloadcog_error(ctx, error):
         await ctx.send("Cog not loaded. Load it using `-load <cogname>` and try again.")
     else:
         raise error
-
-
-
 
 
 if __name__ == "__main__":

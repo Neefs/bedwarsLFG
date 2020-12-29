@@ -7,6 +7,20 @@ with open('./config.json', 'r+') as outfile:
 myuuid = 'b4965441e34b477981d5e37976e7b6a2'
 key = config["api"]["mainkey"]
 
+prestiges = [
+    "Stone",
+    "Iron",
+    "Gold",
+    "Diamond",
+    "Emerald",
+    "Sapphire",
+    "Ruby",
+    "Crystal",
+    "Opal",
+    "Amethyst",
+    "Rainbow (1000+)",
+    "Xenon"
+]
 
 data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(key, "ramenling")).json()
 
@@ -42,3 +56,15 @@ while True:
 
 print(Star)
 
+
+def find_prestige(star):
+  prestigeNum = 0
+  while True:
+    if star - 100 > 0:
+      star -= 100
+      prestigeNum += 1
+    else:
+      break
+  return prestiges[prestigeNum]
+
+print(find_prestige(4))
