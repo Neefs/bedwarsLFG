@@ -20,7 +20,7 @@ class Development(commands.Cog):
                 print('EnviornmentError')
                 self.bot.clear()
 
-    @commands.command(hidden=True, aliases=['cc'])
+    @commands.command(hidden=True, aliases=['cc'], usage='clearconsole')
     async def clearconsole(self, ctx):
         if ctx.author.id in [582385436983427075, 723386696007155763]:
             for i in range(100):
@@ -28,7 +28,7 @@ class Development(commands.Cog):
             print('Cleared\n\n')
             await ctx.send('Cleared')
 
-    @commands.command(name='reloadcmdcog', aliases=['rcc'])
+    @commands.command(name='reloadcmdcog', aliases=['rcc'], hidden=True, usage='reloadcmdcog <cog>')
     async def reload_command_cog(self, ctx, cog=None):
         if not cog:
             await ctx.send(embed=Embed(color=0xff0000, title='⛔ Error ⛔', description='Supply the command cog that you want reloaded.'))
@@ -38,7 +38,28 @@ class Development(commands.Cog):
                 self.bot.unload_extension(f"commands.{cog}")
                 self.bot.load_extension(f"commands.{cog}")
                 await ctx.send(f'{cog} cog has been reloaded')
-            except Ex
+            except commands.errors.ExtensionNotLoaded:
+                await ctx.send(embed=Embed(color=0xff0000, title='⛔ Error ⛔', description='This cog was already unloaded or could not be found'))
+            except Exception as error:
+                await ctx.send(embed=Embed(color=0xff0000, title='⛔ Error ⛔', description=error), delete_after=600)
+                raise error
+
+
+    @commands.command(name='reloadevtcog', aliases=['rec'], hidden=True, usage='reloadevtcog <cog>')
+    async def reload_event_cog(self, ctx, cog=None):
+        """
+        Reloads an event cog.
+        """
+        if not cog:
+            await ctx.send(embed=Embed(color=0xff0000, title='⛔ Error ⛔', description='Supply the command cog that you want reloaded.'))
+        else:
+            try:
+                await ctx.send(f'Reloading {cog} cog...')
+                self.bot.unload_extension(f"events.{cog}")
+                self.bot.load_extension(f"events.{cog}")
+                await ctx.send(f'{cog} cog has been reloaded')
+            except commands.errors.ExtensionNotLoaded:
+                await ctx.send(embed=Embed(color=0xff0000, title='⛔ Error ⛔', description='This cog was already unloaded or could not be found'))
             except Exception as error:
                 await ctx.send(embed=Embed(color=0xff0000, title='⛔ Error ⛔', description=error), delete_after=600)
                 raise error

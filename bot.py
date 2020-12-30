@@ -5,6 +5,7 @@ import json
 import requests
 import os
 import asyncio
+import jishaku
 
 with open('./config.json', 'r+') as outfile:
     config = json.loads(outfile.read())
@@ -23,6 +24,10 @@ bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(config["
 @bot.event
 async def on_ready():
     print('Bot is online')
+    try:
+        bot.load_extension('jishaku')
+    except commands.errors.ExtensionAlreadyLoaded:
+        pass
 
 
 @bot.command(name="load", aliases=["lc"])
