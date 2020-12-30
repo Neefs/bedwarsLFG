@@ -42,14 +42,20 @@ class Help(commands.Cog):
                 
         else:
             cmd = self.bot.get_command(search)
-            if await cmd.can_run(ctx) and ctx.author.guild_permissions.administrator or not cmd.hidden:
-                embed = Embed()
-                embed.title = "Command: {}".format(cmd.name)
-                embed.color = self.color
-                embed.add_field(name='Description', value=cmd.help)
-                embed.add_field(name='Usage', value='-'+cmd.usage)
-                embed.set_footer(text='<> = Required [] = Optional')
-                await ctx.send(embed=embed)
+            try:
+                if await cmd.can_run(ctx) and ctx.author.guild_permissions.administrator or not cmd.hidden:
+                    embed = Embed()
+                    embed.title = "Command: {}".format(cmd.name)
+                    embed.color = self.color
+                    embed.add_field(name='Description', value=cmd.help)
+                    if not cmd.usage:
+                        embed.add_field(name='Usage', value=None)
+                    else:
+                        embed.add_field(name='Usage', value='-'+cmd.usage)
+                    embed.set_footer(text='<> = Required [] = Optional')
+                    await ctx.send(embed=embed)
+            except AttributeError:
+                await ctx.send(embed=Embed(color=0xff0000, title='⛔ Error ⛔', description='That is not a valid help option.\nDo -help to see the options.'))
                 
 
 

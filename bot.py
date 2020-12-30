@@ -16,7 +16,7 @@ allowedAuthorIDs = [
     582385436983427075
 ]
 
-bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(config["bot"]["prefix"]))
+bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(config["bot"]["prefix"]), case_insensitive=True)
 
 
 

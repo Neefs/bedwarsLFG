@@ -154,8 +154,12 @@ class Sync(commands.Cog):
         else:
             await ctx.send("No perm.", delete_after=5)
 
-    @commands.command()
+    @commands.command(usage='forcesync <@user or id> <MC username>')
     async def forcesync(self, ctx, dc: discord.Member, user):
+        """
+        This command is used by moderators to forcibly sync someone without having there discord linked.
+        This will most likely be used if there discord name has a special characters.
+        """
         # This will be used for someone that can't link there discord for whatever reason. Such as special chars
         if any([i for i in ctx.author.roles if i.id in [720281829810241559, 792634123965169706, 792643071699189770, 792642253843464202]]):
             hkey = config["api"]["mainkey"]
