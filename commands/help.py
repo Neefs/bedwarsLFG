@@ -26,7 +26,7 @@ class Help(commands.Cog):
                 for cmd in cog_commands:
                     if await cmd.can_run(ctx) and ctx.author.guild_permissions.administrator or not cmd.hidden:
                         cmdsl.append(cmd.name)
-                
+
                 cmds = ""
                 for i in cmdsl:
                     if i == cmdsl[len(cmdsl) - 1]: # it is the last item in this list
@@ -37,6 +37,7 @@ class Help(commands.Cog):
                     pass
                 else:
                     embed.add_field(name=cog, value=cmds, inline=False)
+            embed.set_footer(text="BedwarsLFG by Neefs and pureqold")
             await ctx.send(embed=embed)
                 
                 

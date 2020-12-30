@@ -83,8 +83,7 @@ class Sync(commands.Cog):
                         else:
                             await ctx.author.edit(nick="[" + str(star) + "✪] " + data["player"]["displayname"])
 
-                        success = await ctx.send("Success!")
-                        await success.add_reaction('✅')
+                        await ctx.send(embed=self.success("Bedwars stats successfully synced with Discord!", star))
 
                         prestige = self.find_prestige(star)
 
@@ -137,8 +136,7 @@ class Sync(commands.Cog):
                         else:
                             await dc.edit(nick="[" + str(star) + "✪] " + data["player"]["displayname"])
 
-                        success = await ctx.send("Success!")
-                        await success.add_reaction('✅')
+                        await ctx.send(embed=self.success("Bedwars stats successfully synced with Discord!", star))
 
                         prestige = self.find_prestige(star)
                         role = get(dc.guild.roles, name=prestige)
@@ -175,8 +173,7 @@ class Sync(commands.Cog):
                     else:
                         await dc.edit(nick="[" + str(star) + "✪] " + data["player"]["displayname"])
 
-                    success = await ctx.send("Success!")
-                    await success.add_reaction('✅')
+                    await ctx.send(embed=self.success("Bedwars stats successfully synced with Discord!", star))
 
                     prestige = self.find_prestige(star)
 
@@ -251,6 +248,14 @@ class Sync(commands.Cog):
         embed.color = 0xff0000
         embed.title = "⛔ Error ⛔"
         embed.description = message
+        return embed
+
+    def success(self, message, star):
+        embed = Embed()
+        embed.color = 0x8cfc03
+        embed.title = "✅ Success ✅"
+        embed.description = message
+        embed.set_footer(text="Your Bedwars star: " + str(star))
         return embed
 
 def setup(bot):
