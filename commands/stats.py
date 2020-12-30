@@ -47,7 +47,7 @@ class Stats(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Stats cog has been loaded.')
+        await self.log_print("✅ Stats cog loaded and ready")
 
     @commands.command(name="stats", usage='stats <minecraft username>')
     async def stats(self, ctx, user):
@@ -150,6 +150,11 @@ class Stats(commands.Cog):
 
     def nice_str(self, value):
         return "`" + str(value) + "`"
+
+    def log_print(self, message):
+        print(message)
+        channel = self.bot.get_channel(793364658563317790)
+        return channel.send(message)
 
 def setup(bot):
     bot.add_cog(Stats(bot))

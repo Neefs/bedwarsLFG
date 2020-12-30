@@ -59,7 +59,7 @@ class Sync(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Sync Cog is ready.')
+        await self.log_print("✅ Sync cog loaded and ready")
 
     @commands.command(usage='sync <mincecraft username>')
     async def sync(self, ctx, user):
@@ -257,6 +257,11 @@ class Sync(commands.Cog):
         embed.description = message
         embed.set_footer(text="Your Bedwars star: " + str(star))
         return embed
+
+    def log_print(self, message):
+        print(message)
+        channel = self.bot.get_channel(793364658563317790)
+        return channel.send(message)
 
 def setup(bot):
     bot.add_cog(Sync(bot))

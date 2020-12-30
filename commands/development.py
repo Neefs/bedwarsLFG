@@ -7,7 +7,7 @@ class Development(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Development Cog loaded')
+        await self.log_print("✅ Development cog loaded and ready")
 
     @commands.command(hidden=True, usage='shutdown')
     async def shutdown(self, ctx):
@@ -15,12 +15,12 @@ class Development(commands.Cog):
         Makes the bot shutdown.
         """
         if ctx.author.id in [582385436983427075, 723386696007155763]:
-            print("Shutdown run by {}".format(ctx.author))
+            await self.log_print("✅ Shutdown run by {}".format(ctx.author))
             await ctx.send('Shutting Down...')
             try:
                 await self.bot.close()
             except EnvironmentError:
-                print('EnviornmentError')
+                await self.log_print("⛔ EnvironmentError - Development")
                 self.bot.clear()
 
     @commands.command(hidden=True, aliases=['cc'], usage='cc')
@@ -73,7 +73,10 @@ class Development(commands.Cog):
                 await ctx.send(embed=Embed(color=0xff0000, title='⛔ Error ⛔', description=error), delete_after=600)
                 raise error
 
-
+    def log_print(self, message):
+        print(message)
+        channel = self.bot.get_channel(793364658563317790)
+        return channel.send(message)
 
 def setup(bot):
     bot.add_cog(Development(bot))

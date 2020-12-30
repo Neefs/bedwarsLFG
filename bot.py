@@ -1,4 +1,5 @@
 import discord
+import jishaku
 from discord.ext import commands
 from discord import Embed
 import json
@@ -22,7 +23,11 @@ bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(config["
 
 @bot.event
 async def on_ready():
-    print('Bot is online')
+    try:
+        bot.load_extension('jishaku')
+    except commands.errors.ExtensionAlreadyLoaded:
+        pass
+    await log_print("✅ Bot online")
 
 
 @bot.command(name="load", aliases=["lc"])
@@ -35,7 +40,7 @@ async def loadcog(ctx):
         while running:
             reaction, user = await bot.wait_for('reaction_add', check=lambda reaction, user: reaction.message.channel == ctx.channel and user == ctx.author and reaction.message.id == init_msg.id)
             if reaction.emoji in ['1️⃣', '2️⃣']:
-                print('broken')
+                print("broken")
                 break
             else:
                 await ctx.send('No')
@@ -44,11 +49,13 @@ async def loadcog(ctx):
             cog = await bot.wait_for('message', check=lambda cog: cog.channel.id == ctx.channel.id and cog.author.id == ctx.author.id)
             bot.load_extension(f"commands.{cog.content}")
             await ctx.send(embed=Embed(description=f"`{cog.content}` cog has been loaded."))
+            await log_print(f"⚙️ `{cog.content}` cog has been loaded.")
         elif reaction.emoji == '2️⃣':
             await ctx.send(embed=Embed(description='What is the name of the cog you want loaded.'))
             cog = await bot.wait_for('message', check=lambda cog: cog.channel.id == ctx.channel.id and cog.author.id == ctx.author.id)
             bot.load_extension(f"events.{cog.content}")
             await ctx.send(embed=Embed(description=f"`{cog.content}` cog has been loaded."))
+            await log_print(f"⚙️ `{cog.content}` cog has been loaded.")
 
     else:
         await ctx.send("No perm.", delete_after=5)
@@ -63,7 +70,7 @@ async def unloadcog(ctx):
         while running:
             reaction, user = await bot.wait_for('reaction_add', check=lambda reaction, user: reaction.message.channel == ctx.channel and user == ctx.author and reaction.message.id == init_msg.id)
             if reaction.emoji in ['1️⃣', '2️⃣']:
-                print('broken')
+                print("broken")
                 break
             else:
                 await ctx.send('No')
@@ -72,11 +79,13 @@ async def unloadcog(ctx):
             cog = await bot.wait_for('message', check=lambda cog: cog.channel.id == ctx.channel.id and cog.author == ctx.author)
             bot.unload_extension(f"commands.{cog.content}")
             await ctx.send(embed=Embed(description=f"`{cog.content}` cog has been unloaded."))
+            await log_print(f"⚙️ `{cog.content}` cog has been unloaded.")
         elif reaction.emoji == '2️⃣':
             await ctx.send(embed=Embed(description='What is the name of the cog you want unloaded.'))
             cog = await bot.wait_for('message', check=lambda cog: cog.channel.id == ctx.channel.id and cog.author == ctx.author)
             bot.unload_extension(f"events.{cog}")
             await ctx.send(embed=Embed(description=f"`{cog}` cog has been unloaded."))
+            await log_print(f"⚙️ `{cog.content}` cog has been unloaded.")
 
     else:
         await ctx.send("No perm.", delete_after=5)
@@ -100,6 +109,7 @@ async def reloadcog(ctx):
             bot.unload_extension(f"commands.{cog.content}")
             bot.load_extension(f"commands.{cog.content}")
             await ctx.send(embed=Embed(description=f"`{cog.content}` cog has been reloaded."))
+            await log_print(f"`{cog.content}` cog has been reloaded.")
         elif reaction.emoji == '2️⃣':
             await ctx.send(embed=Embed(description='What is the name of the cog you want reloaded.'))
             cog = await bot.wait_for('message', check=lambda cog: cog.channel.id == ctx.channel.id and cog.author == ctx.author)
@@ -108,6 +118,7 @@ async def reloadcog(ctx):
             await asyncio.sleep(2)
             bot.load_extension(f"events.{cog.content}")
             await ctx.send(embed=Embed(description=f"`{cog.content}` cog has been reloaded."))
+            await log_print(f"`{cog.content}` cog has been reloaded.")
 
     else:
         await ctx.send("No perm.", delete_after=5)
@@ -154,5 +165,9 @@ if __name__ == "__main__":
         if filename.endswith(".py") and not filename.startswith("_"):
             bot.load_extension(f'events.{filename[:-3]}')
 
+def log_print(message):
+    print(message)
+    channel = bot.get_channel(793364658563317790)
+    return channel.send(message)
 
 bot.run(config["bot"]["token"])

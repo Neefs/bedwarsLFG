@@ -8,7 +8,7 @@ class Help(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Help cog has been loaded.')
+        await self.log_print("✅ Help cog loaded and ready")
 
     @commands.command(name="help", usage='help [command]')
     async def help_command(self, ctx: commands.Context, *, search: str = None):
@@ -58,7 +58,10 @@ class Help(commands.Cog):
             except AttributeError:
                 await ctx.send(embed=Embed(color=0xff0000, title='⛔ Error ⛔', description='That is not a valid help option.\nDo -help to see the options.'))
                 
-
+    def log_print(self, message):
+        print(message)
+        channel = self.bot.get_channel(793364658563317790)
+        return channel.send(message)
 
 def setup(bot):
     bot.add_cog(Help(bot))
