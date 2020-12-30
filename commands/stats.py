@@ -64,10 +64,13 @@ class Stats(commands.Cog):
             user = data["player"]["displayname"]
             gamesPlayed = data["player"]["stats"]["Bedwars"]["games_played_bedwars"]
             finalKills = data["player"]["stats"]["Bedwars"]["final_kills_bedwars"]
+            finalDeaths = data["player"]["stats"]["Bedwars"]["final_deaths_bedwars"]
+            fkdr = round(finalKills / finalDeaths, 2)
             bedsDestroyed = data["player"]["stats"]["Bedwars"]["beds_broken_bedwars"]
             bedsLost = data["player"]["stats"]["Bedwars"]["beds_lost_bedwars"]
             coins = data["player"]["stats"]["Bedwars"]["coins"]
             star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
+            winstreak = data["player"]["stats"]["Bedwars"]["winstreak"]
             prestige = self.find_prestige(star)
             if star in range(1, 1000):
                 star = "[" + str(star) + "✫]"
@@ -77,13 +80,20 @@ class Stats(commands.Cog):
             embed = Embed()
             embed.title = "📊 " + star + " " + user + "'s Bedwars Stats 📊"
             embed.color = 0x037ffc
+            #First Line
             embed.add_field(name='Games Played', value=str(self.nice_str(gamesPlayed)))
-            embed.add_field(name='Prestige', value=str(self.nice_str(prestige)))
+            #embed.add_field(name='Prestige', value=str(self.nice_str(prestige)))
+            embed.add_field(name='Winstreak', value=str(self.nice_str(winstreak)))
             embed.add_field(name='Coins', value=str(self.nice_str(coins)))
+            #Second Line
+            embed.add_field(name='Total Final Kills', value=str(self.nice_str(finalKills)))
+            embed.add_field(name='Total Final Deaths', value=str(self.nice_str(finalDeaths)))
+            embed.add_field(name='FKDR', value=self.nice_str(fkdr))
+            #Third
             embed.add_field(name='Total Beds Broken', value=str(self.nice_str(bedsDestroyed)))
             embed.add_field(name='Total Beds Lost', value=str(self.nice_str(bedsLost)))
             embed.add_field(name='Beds Broken/Lost Ratio', value=str(self.nice_str(round(bedsDestroyed / bedsLost, 2))))
-            embed.add_field(name='Total Final Kills', value=str(self.nice_str(finalKills)))
+
             await ctx.send(embed=embed)
         except TypeError:
             await ctx.send(embed=self.warning("This user does not exist or has never logged onto Hypixel."))

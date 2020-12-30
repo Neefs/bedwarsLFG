@@ -1,5 +1,6 @@
 import json
 import requests
+import pyperclip
 
 with open('./config.json', 'r+') as outfile:
     config = json.loads(outfile.read())
@@ -22,7 +23,8 @@ prestiges = [
     "Xenon"
 ]
 
-data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(key, "ramenling")).json()
+data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(key, "ezbedmas")).json()
+pyperclip.copy(str(data))
 
 XPLevel = data["player"]["stats"]["Bedwars"]["Experience"]
 Star = 1
