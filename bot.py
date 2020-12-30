@@ -16,7 +16,7 @@ allowedAuthorIDs = [
     582385436983427075
 ]
 
-bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(config["bot"]["prefix"]))
+bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(config["bot"]["prefix"]), case_insensitive=True)
 
 
 
@@ -91,7 +91,6 @@ async def reloadcog(ctx):
         while running:
             reaction, user = await bot.wait_for('reaction_add', check=lambda reaction, user: reaction.message.channel == ctx.channel and user == ctx.author and reaction.message.id == init_msg.id)
             if reaction.emoji in ['1️⃣', '2️⃣']:
-                print('broken')
                 break
             else:
                 await ctx.send('No')
@@ -99,7 +98,6 @@ async def reloadcog(ctx):
             await ctx.send(embed=Embed(description='What is the name of the cog you want reloaded.'))
             cog = await bot.wait_for('message', check=lambda cog: cog.channel.id == ctx.channel.id and cog.author == ctx.author)
             bot.unload_extension(f"commands.{cog.content}")
-            await asyncio.sleep(2)
             bot.load_extension(f"commands.{cog.content}")
             await ctx.send(embed=Embed(description=f"`{cog.content}` cog has been reloaded."))
         elif reaction.emoji == '2️⃣':
@@ -144,6 +142,8 @@ async def reloadcog_error(ctx, error):
         await ctx.send("Cog not loaded. Load it using `-load <cogname>` and try again.")
     else:
         raise error
+
+bot.remove_command('help')
 
 
 if __name__ == "__main__":
