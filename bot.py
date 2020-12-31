@@ -12,10 +12,7 @@ with open('./config.json', 'r+') as outfile:
 
 key = config["api"]["mainkey"]
 
-allowedAuthorIDs = [
-    723386696007155763,
-    582385436983427075
-]
+allowedAuthorIDs = config["allowedAuthorIDs"]
 
 bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or(config["bot"]["prefix"]), case_insensitive=True)
 

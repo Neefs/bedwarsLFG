@@ -53,6 +53,18 @@ class Help(commands.Cog):
                         embed.add_field(name='Usage', value=None)
                     else:
                         embed.add_field(name='Usage', value='-'+cmd.usage)
+
+                    if not cmd.aliases:
+                        embed.add_field(name='Aliases', value=None)
+                    else:
+                        aliases = ''
+                        for i in cmd.aliases:
+                            if i == cmd.aliases[len(cmd.aliases) - 1]: # it is the last item in this list
+                                aliases += '-' + i # just add to string
+                            else:
+                                aliases += ('-' + i + ", ") # add to string with comma and space
+                        embed.add_field(name='Aliases', value=aliases)
+                        
                     embed.set_footer(text='<> = Required [] = Optional')
                     await ctx.send(embed=embed)
             except AttributeError:

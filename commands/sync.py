@@ -42,15 +42,15 @@ prestiges = [
     "Water",
     "Fire"
 ]
-
-allowedAuthorIDs = [
-    723386696007155763,
-    582385436983427075,
-    779098822181388348
-]
-
 with open('./config.json', 'r+') as outfile:
     config = json.loads(outfile.read())
+
+
+    
+allowedAuthorIDs = config["allowedAuthorIDs"]
+
+
+
 
 
 class Sync(commands.Cog):

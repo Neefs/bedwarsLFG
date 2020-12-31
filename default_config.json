@@ -1,0 +1,14 @@
+{
+    "api": {
+        "mainkey": "",
+        "secondarykey": ""
+    },
+    
+    "bot": {
+        "token": "",
+        "prefix": "-"
+    },
+
+    "allowedAuthorIDs": []
+    
+}
