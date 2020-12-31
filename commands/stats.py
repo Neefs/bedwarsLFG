@@ -72,6 +72,9 @@ class Stats(commands.Cog):
             star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
             winstreak = data["player"]["stats"]["Bedwars"]["winstreak"]
             prestige = self.find_prestige(star)
+            wins = data["player"]["stats"]["Bedwars"]["wins_bedwars"]
+            losses = gamesPlayed - wins
+            wlr = round(wins / losses, 2)
             if star in range(1, 1000):
                 star = "[" + str(star) + "✫]"
             else:
@@ -86,13 +89,17 @@ class Stats(commands.Cog):
             embed.add_field(name='Winstreak', value=str(self.nice_str(winstreak)))
             embed.add_field(name='Coins', value=str(self.nice_str(coins)))
             #Second Line
+            embed.add_field(name="W's", value=str(self.nice_str(wins)))
+            embed.add_field(name="L's", value=str(self.nice_str(losses)))
+            embed.add_field(name='WLR', value=str(self.nice_str(wlr)))
+            #Third Line
             embed.add_field(name='Total Final Kills', value=str(self.nice_str(finalKills)))
             embed.add_field(name='Total Final Deaths', value=str(self.nice_str(finalDeaths)))
             embed.add_field(name='FKDR', value=self.nice_str(fkdr))
-            #Third
+            #Fourth
             embed.add_field(name='Total Beds Broken', value=str(self.nice_str(bedsDestroyed)))
             embed.add_field(name='Total Beds Lost', value=str(self.nice_str(bedsLost)))
-            embed.add_field(name='Beds Broken/Lost Ratio', value=str(self.nice_str(round(bedsDestroyed / bedsLost, 2))))
+            embed.add_field(name='BBLR', value=str(self.nice_str(round(bedsDestroyed / bedsLost, 2))))
 
             await ctx.send(embed=embed)
         except TypeError:

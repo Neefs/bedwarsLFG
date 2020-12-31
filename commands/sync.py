@@ -111,7 +111,7 @@ class Sync(commands.Cog):
     async def sync_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             cmd = self.bot.get_command('sync')
-            await ctx.send(embed=self.error(f'Type: **Invalid Syntax**\nUsage: {cmd.usage}'))
+            await ctx.send(embed=self.error(f'Type: **Invalid Syntax**\nUsage: -{cmd.usage}'))
         else:
             raise error
 
