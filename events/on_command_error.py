@@ -1,5 +1,7 @@
 from discord.ext import commands
 from discord import Embed
+import json
+import datetime
 
 class Errors(commands.Cog):
     def __init__(self, bot):
@@ -23,6 +25,20 @@ class Errors(commands.Cog):
             embed.add_field(name='Command', value=cmd.name, inline=False)
             embed.add_field(name='Error', value=error, inline=False)
             await channel.send(embed=embed)
+
+                        
+            data = {}
+            data['errors'] = []
+            data['errors'].append({
+                'date': datetime.datetime.utcnow(),
+                'command': f'{cmd.name}',
+                'author': f'{ctx.author.id}',
+                'channel': f'{ctx.channel}',
+                'error': f'{error}'
+            })
+
+            with open('logs.json', 'w') as outfile:
+                json.dump(data, outfile, indent=5)
             raise error
 
 
