@@ -166,28 +166,26 @@ class Sync(commands.Cog):
             try:
                 await ctx.send("Syncing Hypixel Stats for player '" + user + "'...")
 
-                try:
-                    star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
-                    if star in range(1, 1000):
-                        await dc.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
-                    else:
-                        await dc.edit(nick="[" + str(star) + "✪] " + data["player"]["displayname"])
+                
+                star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
+                if star in range(1, 1000):
+                    await dc.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
+                else:
+                    await dc.edit(nick="[" + str(star) + "✪] " + data["player"]["displayname"])
 
-                    await ctx.send(embed=self.success("Bedwars stats successfully synced with Discord!", star))
+                await ctx.send(embed=self.success("Bedwars stats successfully synced with Discord!", star))
 
-                    prestige = self.find_prestige(star)
+                prestige = self.find_prestige(star)
 
-                    # Remove old prestige roles before updating
-                    for role in ctx.author.roles:
-                        if str(role) in prestiges:
-                            await ctx.author.remove_roles(role)
-                            print("Removed role " + str(role) + " from player " + str(ctx.author))
+                # Remove old prestige roles before updating
+                for role in ctx.author.roles:
+                    if str(role) in prestiges:
+                        await ctx.author.remove_roles(role)
+                        print("Removed role " + str(role) + " from player " + str(ctx.author))
 
-                    role = get(dc.guild.roles, name=prestige)
-                    await dc.add_roles(role)
-                except KeyError:
-                    await ctx.send(embed=self.warning("This user does not have their Discord linked on their Hypixel Social Media menu."))
-                    
+                role = get(dc.guild.roles, name=prestige)
+                await dc.add_roles(role)
+                   
             except TypeError:
                 await ctx.send(embed=self.warning("The user '" + user + "' does not exist!"))
         else:

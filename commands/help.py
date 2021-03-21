@@ -38,7 +38,7 @@ class Help(commands.Cog):
                 else:
                     embed.add_field(name=cog, value=cmds, inline=False)
             embed.set_footer(text="BedwarsLFG by Neefs and pureqold")
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, delete_after=120)
                 
                 
         else:
@@ -66,9 +66,9 @@ class Help(commands.Cog):
                         embed.add_field(name='Aliases', value=aliases)
                         
                     embed.set_footer(text='<> = Required [] = Optional')
-                    await ctx.send(embed=embed)
+                    await ctx.send(embed=embed, delete_after=120)
             except AttributeError:
-                await ctx.send(embed=Embed(color=0xff0000, title='⛔ Error ⛔', description='That is not a valid help option.\nDo -help to see the options.'))
+                await ctx.send(embed=Embed(color=0xff0000, title='⛔ Error ⛔', description='That is not a valid help option.\nDo -help to see the options.', delete_after=30))
                 
     def log_print(self, message):
         print(message)
