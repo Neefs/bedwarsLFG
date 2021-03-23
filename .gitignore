@@ -5,3 +5,4 @@ info.json
 .vscode/
 .idea/
 .tests/
+testing.py
