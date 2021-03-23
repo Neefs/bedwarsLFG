@@ -69,15 +69,21 @@ class Sync(commands.Cog):
         """
         if ctx.author.id in allowedAuthorIDs:
             hkey = config["api"]["mainkey"]
-            data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(hkey, user)).json()
+            uuid = requests.get("https://api.mojang.com/users/profiles/minecraft/{}".format(user)).json()
+            data = requests.get("https://api.hypixel.net/player?key={}&uuid={}".format(hkey, uuid["id"])).json()
+            
 
             await ctx.send("Syncing Hypixel Stats for player '" + user + "'...")
 
             try:
                 try:
                     dcLink = data["player"]["socialMedia"]["links"]["DISCORD"]
+                except KeyError:
+                    await ctx.send(embed=self.warning("This user does not have their Discord linked on their Hypixel Social Media menu."))
+                    return
+                else:
                     if str(dcLink) == str(ctx.author):
-                        star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
+                        star = data["player"]["achievements"]["bedwars_level"]
                         if star in range(1, 1000):
                             await ctx.author.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
                         else:
@@ -97,9 +103,8 @@ class Sync(commands.Cog):
                         await ctx.author.add_roles(role)
                     else:
                         await ctx.send(embed=self.warning(user + "'s Discord Username does not match " + str(ctx.author).split("#")[0] + "'s Discord Username!"))
-                        
-                except KeyError:
-                    await ctx.send(embed=self.warning("This user does not have their Discord linked on their Hypixel Social Media menu."))
+                            
+                
                     
             except TypeError:
                 await ctx.send(embed=self.warning("This user does not exist or has never logged onto Hypixel."))
@@ -122,15 +127,16 @@ class Sync(commands.Cog):
         """
         if ctx.author.id in allowedAuthorIDs:
             hkey = config["api"]["mainkey"]
-            data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(hkey, user)).json()
-
+            uuid = requests.get("https://api.mojang.com/users/profiles/minecraft/{}".format(user)).json()
+            data = requests.get("https://api.hypixel.net/player?key={}&uuid={}".format(hkey, uuid["id"])).json()
+            
             await ctx.send("Syncing Hypixel Stats for player '" + user + "'...")
 
             try:
                 try:
                     dcLink = data["player"]["socialMedia"]["links"]["DISCORD"]
                     if str(dcLink) == str(dc):
-                        star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
+                        star = data["player"]["achievements"]["bedwars_level"]
                         if star in range(1, 1000):
                             await dc.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
                         else:
@@ -161,13 +167,14 @@ class Sync(commands.Cog):
         # This will be used for someone that can't link there discord for whatever reason. Such as special chars
         if any([i for i in ctx.author.roles if i.id in [720281829810241559, 792634123965169706, 792643071699189770, 792642253843464202]]):
             hkey = config["api"]["mainkey"]
-            data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(hkey, user)).json()
-
+            uuid = requests.get("https://api.mojang.com/users/profiles/minecraft/{}".format(user)).json()
+            data = requests.get("https://api.hypixel.net/player?key={}&uuid={}".format(hkey, uuid["id"])).json()
+            
             try:
                 await ctx.send("Syncing Hypixel Stats for player '" + user + "'...")
 
                 
-                star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
+                star = data["player"]["achievements"]["bedwars_level"]
                 if star in range(1, 1000):
                     await dc.edit(nick="[" + str(star) + "✫] " + data["player"]["displayname"])
                 else:
@@ -191,38 +198,6 @@ class Sync(commands.Cog):
         else:
             await ctx.send('No perms.')
 
-    def xp_to_star(self, XPLevel):
-        Star = 1
-        XPLevelModified = XPLevel
-
-        while True:
-            if XPLevelModified > 487000:  # Reduce Prestige
-                XPLevelModified -= 487000
-                Star += 100  # add to stars
-            else:  # now we have their prestige
-                if XPLevelModified > 5000:  # Reduce the 5th star and beyond
-                    XPLevelModified -= 5000
-                    Star += 1  # add to stars
-                else:  # now we have their 4-5th star
-                    if XPLevelModified > 3500:  # Reduce the 4th star of the prestige
-                        XPLevelModified -= 3500
-                        Star += 1  # add to stars
-                    else:  # now we have their 3-4th star
-                        if XPLevelModified > 2000:  # Reduce the 3rd star of the prestige
-                            XPLevelModified -= 2000
-                            Star += 1  # add to stars
-                        else:
-                            if XPLevelModified > 1000:  # Reduce the 2nd star of the prestige
-                                XPLevelModified -= 1000
-                                Star += 1  # add to stars
-                            else:
-                                if XPLevelModified > 500:  # Reduce the 1st star of the prestige
-                                    XPLevelModified -= 500
-                                    Star += 1  # add to stars
-                                else:
-                                    break
-
-        return Star
 
     def find_prestige(self, star):
         prestigeNum = 0

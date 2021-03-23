@@ -56,8 +56,9 @@ class Stats(commands.Cog):
         """
 
         hkey = config["api"]["mainkey"]
-        data = requests.get("https://api.hypixel.net/player?key={}&name={}".format(hkey, user)).json()
-
+        uuid = requests.get("https://api.mojang.com/users/profiles/minecraft/{}".format(user)).json()
+        data = requests.get("https://api.hypixel.net/player?key={}&uuid={}".format(hkey, uuid["id"])).json()
+            
         await ctx.send("Attempting to load Bedwars stats of user '" + user + "'...")
 
         try:
@@ -69,7 +70,7 @@ class Stats(commands.Cog):
             bedsDestroyed = data["player"]["stats"]["Bedwars"]["beds_broken_bedwars"]
             bedsLost = data["player"]["stats"]["Bedwars"]["beds_lost_bedwars"]
             coins = data["player"]["stats"]["Bedwars"]["coins"]
-            star = self.xp_to_star(data["player"]["stats"]["Bedwars"]["Experience"])
+            star = data["player"]["achievements"]["bedwars_level"]
             winstreak = data["player"]["stats"]["Bedwars"]["winstreak"]
             prestige = self.find_prestige(star)
             wins = data["player"]["stats"]["Bedwars"]["wins_bedwars"]
@@ -112,38 +113,7 @@ class Stats(commands.Cog):
         embed.description = message
         return embed
 
-    def xp_to_star(self, XPLevel):
-        Star = 1
-        XPLevelModified = XPLevel
 
-        while True:
-            if XPLevelModified > 487000:  # Reduce Prestige
-                XPLevelModified -= 487000
-                Star += 100  # add to stars
-            else:  # now we have their prestige
-                if XPLevelModified > 5000:  # Reduce the 5th star and beyond
-                    XPLevelModified -= 5000
-                    Star += 1  # add to stars
-                else:  # now we have their 4-5th star
-                    if XPLevelModified > 3500:  # Reduce the 4th star of the prestige
-                        XPLevelModified -= 3500
-                        Star += 1  # add to stars
-                    else:  # now we have their 3-4th star
-                        if XPLevelModified > 2000:  # Reduce the 3rd star of the prestige
-                            XPLevelModified -= 2000
-                            Star += 1  # add to stars
-                        else:
-                            if XPLevelModified > 1000:  # Reduce the 2nd star of the prestige
-                                XPLevelModified -= 1000
-                                Star += 1  # add to stars
-                            else:
-                                if XPLevelModified > 500:  # Reduce the 1st star of the prestige
-                                    XPLevelModified -= 500
-                                    Star += 1  # add to stars
-                                else:
-                                    break
-
-        return Star
 
     def find_prestige(self, star):
         prestigeNum = 0
